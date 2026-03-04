@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Муринский Переводчик</title>
+<style>
+/* Общий стиль */
+body {
+    background: linear-gradient(120deg, #0a0a0a, #111);
+    color: #00ff66;
+    font-family: 'Courier New', monospace;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Заголовок */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+/* Текстовое поле */
+textarea {
+    width: 90%;
+    max-width: 600px;
+    height: 150px;
+    background: #000;
+    color: #00ff66;
+    border: 2px solid #00ff66;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+/* Кнопка */
+button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    background: #00ff66;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+    background: #0f0;
+    transform: scale(1.05);
+}
+
+/* Результат */
+#output {
+    margin-top: 25px;
+    width: 90%;
+    max-width: 600px;
+    white-space: pre-wrap;
+    font-size: 1.1rem;
+    background: #111;
+    border: 2px solid #00ff66;
+    border-radius: 10px;
+    padding: 15px;
+    min-height: 80px;
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.3rem;
+    }
+    textarea, #output {
+        font-size: 0.95rem;
+    }
+    button {
+        font-size: 0.95rem;
+        padding: 10px 20px;
+    }
+}
+</style>
+</head>
+<body>
+
+<h1>РУССКИЙ → МУРИНСКИЙ</h1>
+
+<textarea id="input" placeholder="Введи текст..."></textarea>
+<button onclick="translateText()">ГОЙДА ПЕРЕВОД</button>
+
+<div id="output"></div>
+
+<script>
+// Словарь мемных слов
+const dictionary = {
+    "я":"ч",
+    "мурино":"муринность",
+    "гойда":"гойдасть",
+    "абаудна":"абаудность",
+    "друг":"друн",
+    "отец":"бат",
+    "сын":"сыр",
+    "жена":"жинка",
+    "поезд":"поез",
+    "бомж":"мусоротварь"
+};
+
+// Служебные слова которые не меняем
+const ignoreWords = [
+    "и","в","во","на","с","со","по","к","у",
+    "о","а","но","да","или","что","как","же"
+];
+
+function addSuffix(word){
+    if(/[аеёиоуыэюя]$/.test(word)) return word + "сть";
+    if(/н$/.test(word)) return word + "ость";
+    return word + "ость";
+}
+
+function murinify(word){
+    let w = word.toLowerCase();
+
+    if(!/[а-яё]/i.test(w)) return word;
+    if(ignoreWords.includes(w)) return w;
+    if(dictionary[w]) return dictionary[w];
+    if(/(ость|ность|усть|сть)$/.test(w)) return w;
+    if(w.length <= 3) return w;
+
+    return addSuffix(w);
+}
+
+function translateText(){
+    let text = document.getElementById("input").value;
+    let words = text.split(/(\s+)/);
+    let result = words.map(w=>{
+        if(/\s+/.test(w)) return w;
+        return murinify(w);
+    });
+    document.getElementById("output").textContent = result.join("");
+}
+</script>
+
+</body>
+</html>
